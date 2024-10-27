@@ -1,4 +1,4 @@
-#pip install dash
+pip install dash
 
 import pandas as pd
 import pandas as pd
@@ -11,10 +11,10 @@ vdem_df = pd.read_csv("Vdata.csv")
 vdem_df = vdem_df[['country_name', 'year', 'v2x_libdem']]
 vdem_df = vdem_df.rename(columns={"country_name": "Country", "year": "Year", "v2x_libdem": "Liberal Democracy Index"})
 
-# Initialize the Dash app
+# Initializes the Dash app
 app = dash.Dash(__name__)
 
-# Define the layout of the app
+# Defines the layout of the app
 app.layout = html.Div([
     dcc.RangeSlider(
         id='year-slider',
@@ -27,18 +27,18 @@ app.layout = html.Div([
     dcc.Graph(id='democracy-index-map'),
 ])
 
-# Define callback to update map based on the selected year range
+# Defines callback to update map based on the selected year range
 @app.callback(
     Output('democracy-index-map', 'figure'),
     [Input('year-slider', 'value')]
 )
 def update_map(year_range):
-    # Filter the DataFrame based on the selected year range
+    # Filters the DataFrame based on the selected year range
     filtered_df = vdem_df[(vdem_df['Year'] >= year_range[0]) & (vdem_df['Year'] <= year_range[1])]
-    # Group by Country and take the average of the selected metric over the period
+    # Groups by Country and take the average of the selected metric over the period
     avg_df = filtered_df.groupby("Country", as_index=False)['Liberal Democracy Index'].mean()
 
-    # Create a choropleth map
+    # Creates a choropleth map
     fig = px.choropleth(avg_df,
                         locations="Country",
                         locationmode='country names',
@@ -47,6 +47,6 @@ def update_map(year_range):
                         title="Average Liberal Democracy Index by Country (Selected Years)")
     return fig
 
-# Run the Dash app
+# Runs the Dash app
 if __name__ == '__main__':
     app.run_server(debug=True)
